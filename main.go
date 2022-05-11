@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
@@ -66,6 +67,7 @@ func sendTemplate(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	godotenv.Load()
 	port := os.Getenv("PORT")
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/api/template", sendTemplate).Methods("POST")
