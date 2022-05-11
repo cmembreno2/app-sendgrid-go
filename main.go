@@ -15,10 +15,9 @@ import (
 )
 
 type template struct {
-	Recipient     string `json:"recipient"`
-	Subject       string `json:"subject"`
-	TemplateId    string `json:"templateId"`
-	Customer_name string `json:"customer_name"`
+	Recipient           string            `json:"recipient"`
+	TemplateId          string            `json:"templateId"`
+	DynamicTemplateData map[string]string `json:"dynamic_template_data"`
 }
 
 func sendTemplate(w http.ResponseWriter, r *http.Request) {
@@ -42,11 +41,12 @@ func sendTemplate(w http.ResponseWriter, r *http.Request) {
 
 	p := mail.NewPersonalization()
 
-	tos := mail.NewEmail(newTemplate.Customer_name, newTemplate.Recipient)
+	tos := mail.NewEmail(newTemplate.DynamicTemplateData["customer_name"], newTemplate.Recipient)
 	p.AddTos(tos)
 
-	p.SetDynamicTemplateData("customer_name", newTemplate.Customer_name)
-	p.SetDynamicTemplateData("subject", newTemplate.Subject)
+	for k, v := range newTemplate.DynamicTemplateData {
+		p.SetDynamicTemplateData(k, v)
+	}
 
 	m.AddPersonalizations(p)
 
